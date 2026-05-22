@@ -1,0 +1,31 @@
+name: Daily Water Label Scraper (EN)
+
+on:
+  schedule:
+    - cron: '30 0 * * *'   # UTC 00:30 = 北京时间 08:30
+  workflow_dispatch:         # 允许在网页手动触发，方便测试
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run daily scraper
+        env:
+          FEISHU_APP_ID:      ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET:  ${{ secrets.FEISHU_APP_SECRET }}
+          BITABLE_APP_TOKEN:  ${{ secrets.BITABLE_APP_TOKEN }}
+          BITABLE_TABLE_ID:   ${{ secrets.BITABLE_TABLE_ID }}
+        run: python run_daily_en.py
